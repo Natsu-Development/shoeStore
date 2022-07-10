@@ -1,0 +1,231 @@
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-wrapper-before"></div>
+        <div class="content-header row">
+            <div class="content-header-left col-md-4 col-12 mb-2">
+            <h3 class="content-header-title">Order</h3>
+            </div>
+            <div class="content-header-right col-md-8 col-12">
+            <div class="breadcrumbs-top float-md-right">
+                <div class="breadcrumb-wrapper mr-1">
+                <ol class="breadcrumb">
+                    {{!-- must automation this link --}}
+                    <li class="breadcrumb-item"><a href="/admin">Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="/admin/order">Order</a>
+                    </li>
+                    <li class="breadcrumb-item active">Update Order
+                    </li>
+                </ol>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Update Order</h4>
+                            <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+                            <div class="heading-elements">
+                                <ul class="list-inline mb-0">
+                                    <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                                    <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-content collapse show">
+                            {{!-- why have enctype and it's not work --}}
+                            <form method="POST" style="margin: 0 20px;" name="form-update">
+                                <div id="listSubOrder">
+                                    {{!-- <div name="amountOrder" id="listOfSubOrder"> --}}
+                                    {{#each orderDetails}}
+                                        <div name="subOrderField">
+                                            <input class="form-check-input" type="checkbox" id="flexCheckChecked" value="{{this._id}}" name="checkBoxSubOrder" onchange="getListSubOrder()">
+                                            <h2>Sub Order {{inc @index}}</h2>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Name Of Shoe</label>
+                                                <select name="shoeId" class="form-control" onchange="getInfoShoe(this, '{{this._id}}')" id="setShoeName{{this._id}}">
+
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Size</label>
+                                                <select name="size" class="form-control" id="setSize{{this._id}}">
+
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="exampleInputPassword1">Quantity</label>
+                                                <input type="text" class="form-control" name="quantity" placeholder="Enter Description" value={{this.quantity}}>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="exampleInputPassword1">Price</label>
+                                                <input type="text" class="form-control" name="price" id="setPrice{{this._id}}" placeholder="Enter Description" readonly>
+                                            </div>
+                                        </div>
+                                    {{/each}}
+                                    {{!-- </div> --}}
+                                </div> 
+                                <button class="btn btn-primary" type="button" id="btnNewSubOrder">New subOrder</button>
+                                <button class="btn btn-primary" type="button" id="btnDeleteSubOrder">Delete SubOrder</button>
+                                <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var listNewSubOrder = [], listUpdateSubOrder = [], listDeleteSubOrder = [];
+    const listShoe = {{{json listShoe}}};
+    const listSubOrder = {{{json orderDetails}}};
+
+    // load info of subOrder and option must selected of size, name and price
+    document.addEventListener('DOMContentLoaded', function() {
+        listSubOrder.forEach(subOrder => {
+            var output = '', size = '';
+            listUpdateSubOrder.push(subOrder._id);
+            listShoe.forEach(shoe => {
+                if(subOrder.shoeId === shoe._id) {
+                    output += `<option value="${shoe._id}" selected>${shoe.name}</option>`;
+                    shoe.size.forEach(objectSize => {
+                        if(objectSize.size === subOrder.size) {
+                            size += `<option value="${objectSize.size}" selected>${objectSize.size}</option>`;
+                        }
+                        else {
+                            if(objectSize.amount > 0) {
+                                size += `<option value="${objectSize.size}">${objectSize.size}</option>`;
+                            }    
+                        }
+                    })
+                }
+                else {
+                    output += `<option value="${shoe._id}">${shoe.name}</option>`;
+                }    
+            })
+            $(`#setShoeName${subOrder._id}`).html(output);
+            $(`#setSize${subOrder._id}`).html(size);
+            document.getElementById(`setPrice${subOrder._id}`).value = Number(subOrder.price).toFixed(2);
+        })
+    });
+
+    // new sub order
+    document.getElementById('btnNewSubOrder').addEventListener('click', (e) => {
+        // push id (get from amount of subOrder) to listNewSubOrder 
+        var amountOrder = document.getElementsByName('subOrderField').length;
+        listNewSubOrder.push(amountOrder);
+        // display list shoe in here, add new Sub Order to interface
+        document.getElementById('listSubOrder').insertAdjacentHTML('beforeend', 
+        `<div name="subOrderField">
+            <input class="form-check-input" type="checkbox" id="flexCheckChecked" value="${amountOrder}" name="checkBoxSubOrder" onchange="getListSubOrder()">
+            <h2>Sub Order ${amountOrder + 1}</h2>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Name Of Shoe</label>
+                <select name="shoeId" class="form-control" onchange="getInfoShoe(this, ${amountOrder})" id="setShoeName${amountOrder}">
+                    <option value="">Select Shoe</option>
+                    {{#each listShoe}}
+                        <option value="{{this._id}}">{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Size</label>
+                <select name="size" class="form-control" id="setSize${amountOrder}">
+
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Quantity</label>
+                <input type="text" class="form-control" name="quantity" placeholder="Enter Quantity">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Price</label>
+                <input type="text" class="form-control" name="price" id="setPrice${amountOrder}" placeholder="Enter Price" readonly>
+            </div>
+        </div>`);
+    });
+
+    // when change name of the shoe display the size of this shoe
+    function getInfoShoe(shoeIdOfOption, subOrderId) {
+        var output = '';
+        // Set size and price for shoe have selected
+        listShoe.forEach(shoe => {
+            if(shoe._id === shoeIdOfOption.value) {
+                // set price for shoe selected
+                document.getElementById(`setPrice${subOrderId}`).value = Number(shoe.price).toFixed(2);
+                // get available size for the shoe selected
+                shoe.size.forEach(objectSize => {
+                    if(objectSize.amount > 0) {
+                        output += `<option value="${objectSize.size}">${objectSize.size}</option>`;
+                    }
+                });
+            }
+        });
+        // set available size for the shoe selected
+        $(`#setSize${subOrderId}`).html(output);
+    }
+
+    //when click checkbox to delete subOrder
+    function getListSubOrder() {
+        const listCheckBoxSubOrder = document.getElementsByName('checkBoxSubOrder');
+        listDeleteSubOrder = 
+            Array.from(listCheckBoxSubOrder) // Convert checkboxes to an array to use filter and map.
+            .filter(i => i.checked) // Use Array.filter to remove unchecked checkboxes.
+            .map(i => i.value).sort(); // Use Array.map to extract only the checkbox values from the array of objects and sort value.
+        console.log(listDeleteSubOrder);
+    }
+
+    // delete field suborder on interface
+    document.getElementById('btnDeleteSubOrder').addEventListener('click', (e) => {
+        var listCheckBoxSubOrder = document.getElementsByName("checkBoxSubOrder"); // list delete sub order
+        var listSubOrder = document.getElementById("listSubOrder");
+        var subOrderField = document.getElementsByName("subOrderField"); // list suborder of order
+        
+        listDeleteSubOrder.forEach(subOrderId => {
+            // variable to remove sub order(postion of suborder)
+            var position = 0;
+            // removed sub order field on interface
+            listCheckBoxSubOrder.forEach(checkBox => {
+                if(subOrderId === checkBox.value) {
+                    listSubOrder.removeChild(subOrderField[position]);
+                }
+                // increase position because the before position is deleted 
+                position++;
+            });
+            // filter listUpdateSubOrder and listNewSubOrder before submit(delete value match with listDeleteSubOrder)
+            // LIST UPDATE SUB_ORDER
+            // variable to remove update sub order (postion of updateSubOrder in listUpdateSubOrder)
+            var updatePosition = 0;
+            listUpdateSubOrder.forEach(idUpdate => {
+                if(idUpdate === subOrderId) {
+                    // if subOrder is choosed to update, but be choosed to delete, delete it in listUpdateSubOrder
+                    listUpdateSubOrder[updatePosition] = '';
+                }
+                updatePosition++;
+            });
+            // LIST NEW SUB_ORDER
+            var addPosition = 0;
+            listNewSubOrder.forEach(idAdd => {
+                if(idAdd === Number(subOrderId)) {
+                    // if subOrder is added, but be choosed to delete, delete it in listNewSubOrder
+                    listNewSubOrder[addPosition] = '';
+                } 
+                addPosition++;
+            });
+        });
+    }); 
+
+    // submit form
+    document.getElementById('btnUpdate').addEventListener('click', (e) => {
+        e.preventDefault();
+        const formUpdate = document.forms['form-update'];
+        formUpdate.action = `/admin/order/saveUpdate/{{orderId}}?_method=PUT&updateSubOrder=${listUpdateSubOrder}&newSubOrder=${listNewSubOrder}&deleteSubOrder=${listDeleteSubOrder}`;
+        console.log(formUpdate.action);
+        formUpdate.submit();
+    })
+</script>

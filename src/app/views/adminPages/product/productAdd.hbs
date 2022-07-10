@@ -1,0 +1,174 @@
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-wrapper-before"></div>
+        <div class="content-header row">
+            <div class="content-header-left col-md-4 col-12 mb-2">
+            <h3 class="content-header-title">Product</h3>
+            </div>
+            <div class="content-header-right col-md-8 col-12">
+            <div class="breadcrumbs-top float-md-right">
+                <div class="breadcrumb-wrapper mr-1">
+                <ol class="breadcrumb">
+                    {{!-- must automation this link --}}
+                    <li class="breadcrumb-item"><a href="/admin">Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="/admin/product">Product</a>
+                    </li>
+                    <li class="breadcrumb-item active">Add Product
+                    </li>
+                </ol>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Add Product</h4>
+                            <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+                            <div class="heading-elements">
+                                <ul class="list-inline mb-0">
+                                    <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                                    <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                                    <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                                    <li><a data-action="close"><i class="ft-x"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-content collapse show">
+                            {{!-- why have enctype and it's not work --}}
+                            <form action="/admin/product/save" method="POST" style="margin: 0 20px;" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Name</label>
+                                    <input type="text" class="form-control" name="name" placeholder="Enter shoeName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Brand of product</label>
+                                    <select name="brand" class="form-control">
+                                        {{#each listBrand}}
+                                            <option value="{{this._id}}">{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Style of product</label>
+                                    <select name="style" class="form-control">
+                                        {{#each listStyle}}
+                                            <option value="{{this._id}}">{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Introduce of product</label>
+                                    <input type="text" class="form-control" name="introduce" placeholder="Enter the introduce of this shoe">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Description</label>
+                                    <input type="text" class="form-control" name="description" placeholder="Enter Description">
+                                </div>
+                                {{#if errImage}}
+                                    <div class="alert alert-warning" role="alert">
+                                        {{errImage}}
+                                    </div>
+                                {{/if}}
+                                <div id="imageFields">                                    
+                                    <div class="form-group imageField">
+                                        <input class="form-check-input" type="checkbox" id="flexCheckChecked" value="0" name="checkBoxImage" onclick="getArrayImageDelete(0)">
+                                        <label for="exampleInputPassword1">Images</label>
+                                        <input type="file" class="form-control" name="image" placeholder="Select image" accept='image/*' value="0" onclick="displayImg(0)">
+                                        <img class="imgEdit" name="imageChange" src="/upload/{{this.filename}}" alt="Images of product" style="width: 25%;max-height: 310px;margin: 0.5% 37.5%; min-height: 105px; min-width: 10%;">
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" id="btnAddFieldImage" type="button">Add field Image</button>
+                                <button class="btn btn-primary" id="btnDeleteFieldImage" type="button">Delete Image Of Shoe</button>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Sizes in US/UK (Enter the amount of the shoes)</label>
+                                    {{#each listSize}}
+                                    <div class ="form-check">
+                                        <input value="{{this}}" name="size" type="hidden">
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            {{this}}
+                                        </label>
+                                        <input type="number" name="amountOfSize" placeholder="Enter amount of this size" value="0" min="0">
+                                    </div>  
+                                    {{/each}}
+                                </div>        
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Price</label>
+                                    <input type="text" class="form-control" name="price" placeholder="Enter Description">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // delete image of shoes
+    const listCheckBoxImage = document.getElementsByName('checkBoxImage');
+    var arrayImageDelete = [];
+
+    function getArrayImageDelete(position) {
+        const listCheckBoxImage = document.getElementsByName('checkBoxImage');
+        listCheckBoxImage[position].addEventListener('change', () => {
+            arrayImageDelete = 
+            Array.from(listCheckBoxImage) // Convert checkboxes to an array to use filter and map.
+            .filter(i => i.checked) // Use Array.filter to remove unchecked checkboxes.
+            .map(i => i.value).sort(); // Use Array.map to extract only the checkbox values from the array of objects.
+        console.log(arrayImageDelete);
+        })
+    }
+
+    // test
+    var selectedFile = document.getElementsByName("image");
+
+    // button to add field image or delete field image
+    const listFieldImage = document.getElementById('imageFields');
+    const btnAddFieldImage = document.getElementById('btnAddFieldImage');
+    const btnDeleteFieldImage = document.getElementById('btnDeleteFieldImage');
+    const imageField = document.getElementsByClassName('imageField');
+
+    // add field imgae
+    btnAddFieldImage.addEventListener('click', () => {
+        const position = selectedFile.length;
+        listFieldImage.insertAdjacentHTML('beforeend', `<div class="form-group imageField">
+                                                            <input class="form-check-input" type="checkbox" id="flexCheckChecked" value="${position}" name="checkBoxImage" onclick="getArrayImageDelete(${position})">
+                                                            <label for="exampleInputPassword1">Images</label>
+                                                            <input type="file" class="form-control" name="image" id="image" value="${position}" onclick="displayImg(${position})">
+                                                            <img class="imgEdit" name="imageChange" src="" alt="Images of product" style="width: 25%;max-height: 310px;margin: 0.5% 37.5%; min-height: 105px; min-width: 10%;">
+                                                        </div>`); 
+    });
+
+    // delete field image on interface
+    btnDeleteFieldImage.addEventListener('click', () => {
+        var selectedFile = document.getElementsByName("image");
+
+        // get array of input type = file
+        for(var i = 0; i < arrayImageDelete.length; i++) { 
+            for(var j = 0; j < selectedFile.length; j++) { 
+                if(arrayImageDelete[i]===selectedFile[j].defaultValue) {
+                    listFieldImage.removeChild(imageField[j]);
+                }
+            }
+        }
+    }); 
+
+    // display image when update or add
+    function displayImg(position) {
+        var selectedFile = document.getElementsByName("image");
+        var srcImage = document.getElementsByName("imageChange");
+        selectedFile[position].addEventListener('change', (event) => {
+            // display new image when have update.
+            srcImage[event.target.defaultValue].src = URL.createObjectURL(event.target.files[0]);
+            srcImage[event.target.defaultValue].onload = function() {
+                URL.revokeObjectURL(srcImage[event.target.defaultValue].src) // free memory
+            }
+        });     
+    }
+</script>

@@ -1,0 +1,136 @@
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-wrapper-before"></div>
+        <div class="content-header row">
+            <div class="content-header-left col-md-4 col-12 mb-2">
+            <h3 class="content-header-title">Order</h3>
+            </div>
+            <div class="content-header-right col-md-8 col-12">
+            <div class="breadcrumbs-top float-md-right">
+                <div class="breadcrumb-wrapper mr-1">
+                <ol class="breadcrumb">
+                    {{!-- must automation this link --}}
+                    <li class="breadcrumb-item"><a href="/admin">Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="/admin/order">Order</a>
+                    </li>
+                    <li class="breadcrumb-item active">Add Order
+                    </li>
+                </ol>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Add Order</h4>
+                            <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+                            <div class="heading-elements">
+                                <ul class="list-inline mb-0">
+                                    <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                                    <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                                    <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                                    <li><a data-action="close"><i class="ft-x"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-content collapse show">
+                            {{!-- why have enctype and it's not work --}}
+                            <form action="/admin/order/save" method="POST" style="margin: 0 20px;">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Customer's name</label>
+                                    <select name="customerId" class="form-control">
+                                        <option value="">Select Customer</option>
+                                        {{#each listCustomer}}
+                                            <option value="{{this._id}}">{{this.fullname}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div id="listSubOrder">
+                                    <h2>Sub Order 1</h2>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Name Of Shoe</label>
+                                        <select name="shoeId" class="form-control" onchange="getShoeId(this, 1)">
+                                            <option value="">Select Shoe</option>
+                                            {{#each listShoe}}
+                                                <option value="{{this._id}}">{{this.name}}</option>
+                                            {{/each}}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Size</label>
+                                        <select name="size" class="form-control" id="setSize1">
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Quantity</label>
+                                        <input type="text" class="form-control" name="quantity" placeholder="Enter Description">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Price</label>
+                                        <input type="text" class="form-control" name="price" id="setPrice1" placeholder="Enter Description">
+                                    </div>
+                                </div> 
+                                <button class="btn btn-primary" type="button" id="btnNewSubOrder">New subOrder</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var idOfSubOrder = 1;
+    function getShoeId(seletedShoe, idOfSubOrder) {
+        var shoeId = seletedShoe.value;
+        var output = '', price = 0;
+        var list = {{{json listShoe}}};
+        for(var i = 0; i < list.length; i++) {
+            if(list[i]._id === shoeId) {
+                price = list[i].price;
+                for(var j = 0; j < list[i].size.length; j++) {
+                    if(list[i].size[j].amount > 0) {
+                        output += `<option value="${list[i].size[j].size}">${list[i].size[j].size}</option>`
+                    }
+                }
+            }
+        }
+        $(`#setSize${idOfSubOrder}`).html(output);
+        document.getElementById(`setPrice${idOfSubOrder}`).value = price;
+    }
+    document.getElementById('btnNewSubOrder').addEventListener('click', (e) => {
+        idOfSubOrder++;
+        document.getElementById('listSubOrder').insertAdjacentHTML('beforeend', 
+        `<h2>Sub Order ${idOfSubOrder}</h2>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Name Of Shoe</label>
+            <select name="shoeId" class="form-control" onchange="getShoeId(this, ${idOfSubOrder})">
+                <option value="">Select Shoe</option>
+                {{#each listShoe}}
+                    <option value="{{this._id}}">{{this.name}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Size</label>
+            <select name="size" class="form-control" id="setSize${idOfSubOrder}">
+
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Quantity</label>
+            <input type="text" class="form-control" name="quantity" placeholder="Enter Description">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Price</label>
+            <input type="text" class="form-control" name="price" id="setPrice${idOfSubOrder}" placeholder="Enter Description">
+        </div>`);
+    })
+</script>

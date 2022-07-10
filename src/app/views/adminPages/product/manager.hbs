@@ -1,0 +1,99 @@
+<div class="app-content content">
+    <div class="content-wrapper">
+    <div class="content-wrapper-before"></div>
+    <div class="content-header row">
+        <div class="content-header-left col-md-4 col-12 mb-2">
+        <h3 class="content-header-title">Product Manager</h3>
+        </div>
+        <div class="content-header-right col-md-8 col-12">
+        <div class="breadcrumbs-top float-md-right">
+            <div class="breadcrumb-wrapper mr-1">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Home</a>
+                </li>
+                <li class="breadcrumb-item active">Product
+                </li>
+            </ol>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="content-body">
+        <section id="header-footer">
+            <div class="row match-height">
+                {{#each shoes}}
+                <div class="col-lg-4 col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                {{#each listBrand}}
+                                    {{{getCategory this._id this.name ../this.brand}}} 
+                                {{/each}}
+                            </h4>
+                            <h6 class="card-subtitle text-muted">{{this.name}}</h6>
+                        </div>
+                        <img class="" src="/upload/{{this.arrayImage.[0].filename}}" alt="Card image cap">
+                        <div class="card-body">
+                            <p class="card-text">{{this.introduce}}</p>
+                            <p class="card-text" style="color: #fa626b">{{this.price}}</p> 
+                        </div>
+                        <div class="card-footer border-top-blue-grey border-top-lighten-5 text-muted">
+                            <a href="/admin/product/update/{{this._id}}" style="margin: 18%;"><button class="btn btn-warning">Edit</button></a>
+                            <a data-id="{{this._id}}" data-toggle="modal" data-target="#shoeModal">
+                                <button class="btn btn-danger">Delete</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </section>
+    </div>
+    </div>
+</div>
+
+{{!-- alert confirm to delete force--}}
+<div class="modal fade" id="shoeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Are you want to delete this shoe?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure to delete this shoe? It cann't be recovery after delete.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" id="btn-delete-shoe">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form action="" method="POST" name="delete-shoe-form"></form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var shoeId;
+
+        // DELETE
+        // form and button delete
+        var formToDelete = document.forms['delete-shoe-form'];
+        var btnDeleteCategory = document.getElementById('btn-delete-shoe');
+
+        // when dialog confirm (clicked button delete) and get data-id
+        $('#shoeModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            shoeId = button.data('id');
+        });
+        
+        // Click the button confirm to delete force
+        btnDeleteCategory.onclick = function() {
+            formToDelete.action = `/admin/product/delete/${shoeId}?_method=DELETE`;
+            formToDelete.submit();
+        }
+    });
+</script>

@@ -1,0 +1,251 @@
+<div class="breadcrumbs">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <p class="bread"><span><a href="/">Home</a></span> / <span>Shopping Cart</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="colorlib-product">
+    <div class="container">
+        <div class="row row-pb-lg">
+            <div class="col-md-10 offset-md-1">
+                <div class="process-wrap">
+                    <div class="process text-center active">
+                        <p><span>01</span></p>
+                        <h3>Shopping Cart</h3>
+                    </div>
+                    <div class="process text-center">
+                        <p><span>02</span></p>
+                        <h3>Checkout</h3>
+                    </div>
+                    <div class="process text-center">
+                        <p><span>03</span></p>
+                        <h3>Order Complete</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-pb-lg">
+            <div class="col-md-12">
+                <div class="product-name d-flex">
+                    <div class="one-forth text-left px-4">
+                        <span>Product Details</span>
+                    </div>
+                    <div class="one-eight text-center">
+                        <span>Size</span>
+                    </div>
+                    <div class="one-eight text-center">
+                        <span>Price</span>
+                    </div>
+                    <div class="one-eight text-center">
+                        <span>Quantity</span>
+                    </div>
+                    <div class="one-eight text-center">
+                        <span>Total</span>
+                    </div>
+                    <div class="one-eight text-center px-4">
+                        <span>Remove</span>
+                    </div>
+                </div>
+                <form id="showCart" name='formCheckOut' method='POST'>
+                
+                </form>
+                <button id="updateCart" class="btn btn-primary" type="button" style="float: right">Update Cart</button>
+            </div>
+        </div>
+        <div class="row row-pb-lg">
+            <div class="col-md-12">
+                <div class="total-wrap">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <form action="#">
+                                <div class="row form-group">
+                                    <div class="col-sm-9">
+                                        <input type="text" name="quantity" class="form-control input-number" placeholder="Your Coupon Number...">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="submit" value="Apply Coupon" class="btn btn-primary">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-4 text-center">
+                            <div class="total">
+                                <div class="sub">
+                                    <p><span>Subtotal:</span> <span>$200.00</span></p>
+                                    <p><span>Delivery:</span> <span>$0.00</span></p>
+                                    <p><span>Discount:</span> <span>$45.00</span></p>
+                                </div>
+                                <div class="grand-total">
+                                    <p>
+                                        <span><strong>Total:</strong></span> 
+                                        <span id='setTotal'>$450.00</span>
+                                    </p>
+                                </div>
+                            </div>
+                        <button class="btn btn-primary" id="btnCheckout" style="float: right; margin-top: 12px">Check Out</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-8 offset-sm-2 text-center colorlib-heading colorlib-heading-sm">
+                <h2>Related Products</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-lg-3 mb-4 text-center">
+                <div class="product-entry border">
+                    <a href="#" class="prod-img">
+                        <img src="/images/item-1.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
+                    </a>
+                    <div class="desc">
+                        <h2><a href="#">Women's Boots Shoes Maca</a></h2>
+                        <span class="price">$139.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3 mb-4 text-center">
+                <div class="product-entry border">
+                    <a href="#" class="prod-img">
+                        <img src="/images/item-2.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
+                    </a>
+                    <div class="desc">
+                        <h2><a href="#">Women's Minam Meaghan</a></h2>
+                        <span class="price">$139.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3 mb-4 text-center">
+                <div class="product-entry border">
+                    <a href="#" class="prod-img">
+                        <img src="/images/item-3.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
+                    </a>
+                    <div class="desc">
+                        <h2><a href="#">Men's Taja Commissioner</a></h2>
+                        <span class="price">$139.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3 mb-4 text-center">
+                <div class="product-entry border">
+                    <a href="#" class="prod-img">
+                        <img src="/images/item-4.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
+                    </a>
+                    <div class="desc">
+                        <h2><a href="#">Russ Men's Sneakers</a></h2>
+                        <span class="price">$139.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function displayCart() {
+            // load cart
+            var showCart = document.getElementById('showCart');
+            var cartArray = shoppingCart.getCart();
+            var output = '', total = 0, formatPrice = 0;
+            for(var i in cartArray) {
+                formatPrice = Number(cartArray[i].price).toFixed(2);
+                output += `<div class="product-cart d-flex">
+                            <div class="one-forth">
+                                <div class="product-img" style="background-image: url(${cartArray[i].firstImg});">
+                                </div>
+                                <div class="display-tc">
+                                    <input type="hidden" name="shoeId" value="${cartArray[i].shoeId}">
+                                    <h3>${cartArray[i].shoeName}</h3>
+                                </div>
+                            </div>
+                            <div class="one-eight text-center">
+                                <div class="display-tc">
+                                    <input type="hidden" name="size" value="${cartArray[i].size}">
+                                    <span class="size">${cartArray[i].size}</span>
+                                </div>
+                            </div>
+                            <div class="one-eight text-center">
+                                <div class="display-tc">
+                                    <input type="hidden" name="price" value="${cartArray[i].price}"> 
+                                    <span class="price">${formatPrice}</span>
+                                </div>
+                            </div>
+                            <div class="one-eight text-center">
+                                <div class="display-tc">
+                                    <input type="text" id="quantity" name="quantity" class="form-control input-number text-center" value="${cartArray[i].quantity}" min="1" max="100" onchange="getCartId(${cartArray[i].cartId})">
+                                </div>
+                            </div>
+                            <div class="one-eight text-center">
+                                <div class="display-tc">
+                                    <span class="price">${cartArray[i].total}</span>
+                                </div>
+                            </div>
+                            <div class="one-eight text-center">
+                                <div class="display-tc" style="cursor: pointer">
+                                    <a class="closed" id="btnRemove" onclick="removeCart(${cartArray[i].cartId})"></a>
+                                </div>
+                            </div>
+                        </div>`;
+                total += Number(cartArray[i].total);
+            }
+            $('#showCart').html(output);
+            document.getElementById('setTotal').innerText = '$'+Number(total).toFixed(2);
+            showCart.insertAdjacentHTML('beforeend', `<input name="total" id="total" type="hidden" value="${Number(total)}">`);
+            //$('.total-cart').html(shoppingCart.totalCart());
+            //$('.total-count').html(shoppingCart.totalCount());
+        }    
+        displayCart();
+    });
+
+    // get cartId and quantity for update cart
+    var arrayCartUpdate = [];
+    function getCartId(cartId) {
+        if(cartId === '') {
+            return arrayCartUpdate;
+        }
+        const quantity = document.getElementsByName('quantity')[cartId].value;
+        if(arrayCartUpdate.length === 0) {
+            arrayCartUpdate.push({
+                'cartId': cartId,
+                'quantity': quantity
+            });
+        }
+        else {
+            for(var i = 0; i < arrayCartUpdate.length; i++) {
+                if(arrayCartUpdate[i].cartId === cartId) {
+                    arrayCartUpdate[i].quantity = quantity;
+                    return;
+                }
+            }
+            arrayCartUpdate.push({
+                'cartId': cartId,
+                'quantity': quantity
+            });
+        }
+    }
+    // update cart
+    document.getElementById('updateCart').addEventListener('click', (e) => {
+        e.preventDefault();
+        shoppingCart.updateShoeFromCart(getCartId(''));
+        location.reload();
+    })
+    // onclick removeCart
+    function removeCart(cartId) {
+        shoppingCart.removeShoeFromCart(cartId);
+        location.reload();
+    }
+
+    //check out
+    document.getElementById('btnCheckout').addEventListener('click', (e) => {
+        e.preventDefault();
+        var cartCheckout = document.forms['formCheckOut'];
+        cartCheckout.action = `/customerService/checkout`;
+        cartCheckout.submit();
+    })
+</script>

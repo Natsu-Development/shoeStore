@@ -1,0 +1,186 @@
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-wrapper-before"></div>
+        <div class="content-header row">
+            <div class="content-header-left col-md-4 col-12 mb-2">
+            <h3 class="content-header-title">Product</h3>
+            </div>
+            <div class="content-header-right col-md-8 col-12">
+            <div class="breadcrumbs-top float-md-right">
+                <div class="breadcrumb-wrapper mr-1">
+                <ol class="breadcrumb">
+                    {{!-- must automation this link --}}
+                    <li class="breadcrumb-item"><a href="/admin">Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="/admin/product">Product</a>
+                    </li>
+                    <li class="breadcrumb-item active">Update Product
+                    </li>
+                </ol>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="content-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Update Product</h4>
+                            <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+                            <div class="heading-elements">
+                                <ul class="list-inline mb-0">
+                                    <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                                    <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                                    <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                                    <li><a data-action="close"><i class="ft-x"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-content collapse show">
+                            {{!-- why have enctype and it's not work --}}
+                            <form method="POST" action="/admin/product/saveUpdate/{{result._id}}?_method=PUT" name="product-update-form" style="margin: 0 20px;" enctype='multipart/form-data'>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Name</label>
+                                    <input type="text" class="form-control" name="name" placeholder="Enter shoeName" value="{{result.name}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Brand of product</label>
+                                    <select name="brand" class="form-control">
+                                        {{#if result.brand}}
+                                        {{#each listBrand}}
+                                            {{{getCategoryAdded this._id this.name ../result.brand}}} 
+                                        {{/each}}
+                                        {{/if}}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Style of product</label>
+                                    <select name="style" class="form-control">
+                                    {{#if result.style}}
+                                        {{#each listStyle}}
+                                            {{{getCategoryAdded this._id this.name ../result.style}}} 
+                                        {{/each}}
+                                    {{/if}}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Introduce of product</label>
+                                    <input type="text" class="form-control" name="introduce" placeholder="Enter the introduce of this shoe" value="{{result.introduce}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Description</label>
+                                    <input type="text" class="form-control" name="description" placeholder="Enter Description" value="{{result.description}}">
+                                </div>
+                                <div id="imageFields">
+                                {{#each result.arrayImage}}
+                                    <div class="form-group imageField">
+                                        <input class="form-check-input" type="checkbox" id="flexCheckChecked" value="{{this.position}}" name="checkBoxImage" onchange="getArrayImageDelete()">
+                                        <label for="exampleInputPassword1">Images</label>
+                                        <input type="file" class="form-control" name="image" id="image" value="{{this.position}}" onchange="displayImg(event)">
+                                        <img class="imgEdit" name="imageChange" src="/upload/{{this.filename}}" alt="Images of product" style="width: 25%;max-height: 310px;margin: 0.5% 37.5%; min-height: 105px; min-width: 10%;">
+                                    </div>
+                                {{/each}}
+                                </div>
+                                <button class="btn btn-primary" id="btnAddFieldImage" type="button">Add field Image</button>
+                                <button class="btn btn-primary" id="btnDeleteFieldImage" type="button">Delete Image Of Shoe</button>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Sizes in US/UK (Enter the amount of the shoes)</label>
+                                    {{#each result.size}}
+                                    <div class ="form-check" style="margin: 2%">
+                                        <input value="{{this.size}}" name="size" type="hidden">
+                                        <label class="form-check-label" for="flexCheckDefault" style="margin-right: 2%; width: 5%">
+                                            {{this.size}}
+                                        </label>
+                                        <input type="number" name="amountOfSize" placeholder="Enter amount of this size" value="{{this.amount}}" style="max-width: 8%">
+                                    </div>  
+                                    {{/each}}
+                                </div> 
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Total amount</label>
+                                    <input type="text" class="form-control" name="display" placeholder="Enter Description" value="{{result.amount}}" readonly>
+                                </div>   
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Price</label>
+                                    <input type="text" class="form-control" name="price" placeholder="Enter Description" value="{{result.price}}">
+                                </div>
+                                <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // delete image of shoes
+    var arrayImageDelete = [], arrayImageAddAndUpdate = [];
+
+    // have error in this function check itttttttt
+    function getArrayImageDelete() {
+        const listCheckBoxImage = document.getElementsByName('checkBoxImage');
+        arrayImageDelete = Array.from(listCheckBoxImage) // Convert checkboxes to an array to use filter and map.
+            .filter(i => i.checked) // Use Array.filter to remove unchecked checkboxes.
+            .map(i => i.value).sort(); // Use Array.map to extract only the checkbox values from the array of objects.
+        console.log(arrayImageDelete);
+    }
+
+    // List field image and field image to handle
+    const listFieldImage = document.getElementById('imageFields');
+    const imageField = document.getElementsByClassName('imageField');
+
+    // add field image
+    var selectedFile = document.getElementsByName("image");
+    document.getElementById('btnAddFieldImage').addEventListener('click', () => {
+        const position = selectedFile.length;
+        listFieldImage.insertAdjacentHTML('beforeend', 
+        `<div class="form-group imageField">
+            <input class="form-check-input" type="checkbox" id="flexCheckChecked" value="${position}" name="checkBoxImage" onchange="getArrayImageDelete()">
+            <label for="exampleInputPassword1">Images</label>
+            <input type="file" class="form-control" name="image" id="image" value="${position}" onchange="displayImg(event)">
+            <img class="imgEdit" name="imageChange" src="" alt="Images of product" style="width: 25%;max-height: 310px;margin: 0.5% 37.5%; min-height: 105px; min-width: 10%;">
+        </div>`); 
+    });
+
+    // delete field image on interface
+    document.getElementById('btnDeleteFieldImage').addEventListener('click', () => {
+        var arrayImage = Array.from(document.getElementsByName("image")).map(i => i.defaultValue);
+        // list field image for delete (display: none)
+        var arrayDeleteFieldImg = arrayImageDelete.filter(position => arrayImage.includes(position)).reverse();
+        // list position need delete have exist in arrayAddAndDelete, delete it
+        var deleteImageInArrImg = arrayImageDelete.filter(position => arrayImageAddAndUpdate.includes(position));
+        deleteImageInArrImg.forEach(position => {arrayImageAddAndUpdate[position] = ''});
+        console.log(arrayDeleteFieldImg);
+        // display: none that imageField have been deleted
+        arrayDeleteFieldImg.forEach(position => {
+            imageField[position].style = "display: none";
+        });
+    }); 
+
+    // display image when update or add
+    function displayImg(event) {
+        var srcImage = document.getElementsByName("imageChange");
+        // get value of previous image to DELETE
+        const positionHasExist = arrayImageAddAndUpdate.filter(position => position === event.target.defaultValue);
+        if(positionHasExist.length === 0) {
+            arrayImageAddAndUpdate.push(`${event.target.defaultValue}`);
+        }
+        // display new image when have update.
+        srcImage[event.target.defaultValue].src = URL.createObjectURL(event.target.files[0]);
+        srcImage[event.target.defaultValue].onload = function() {
+            URL.revokeObjectURL(srcImage[event.target.defaultValue].src) // free memory
+        }
+        console.log(arrayImageAddAndUpdate);
+    }
+
+    // format position of field input for display Image
+    
+    // handle update   
+    document.getElementById("btnUpdate").onclick = function(e) {
+        e.preventDefault();
+        var formToUpdate = document.forms['product-update-form'];
+        formToUpdate.action += '&image=' + arrayImageAddAndUpdate + '&imageDelete=' + arrayImageDelete;
+        formToUpdate.submit();
+    }
+</script>
