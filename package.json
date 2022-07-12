@@ -1,0 +1,37 @@
+{
+  "name": "shoestore",
+  "version": "1.0.0",
+  "description": "shoeStore by NodeJS",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js"
+  },
+  "author": "Sand Lee",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
+    "express-session": "^1.17.2",
+    "handlebars": "^4.7.7",
+    "https": "^1.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "method-override": "^3.0.0",
+    "mongoose": "^6.0.7",
+    "mongoose-sequence": "^5.3.1",
+    "mongoose-slug-generator": "^1.0.4",
+    "multer": "^1.4.3",
+    "node-localstorage": "^2.2.1",
+    "passport": "^0.5.2",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-jwt": "^4.0.0"
+  },
+  "devDependencies": {
+    "express-handlebars": "^5.3.4",
+    "nodemon": "^2.0.13"
+  }
+}
