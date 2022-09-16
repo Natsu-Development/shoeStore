@@ -1,11 +1,17 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const path = require("path");
 const methodOverride = require("method-override");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const fs = require("fs");
-const https = require("https");
+const http = require("http");
+
+// swagger ui and swaggerJsDocs import
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("../swagger.json");
+const swaggerJsDoc = require("swagger-jsdoc");
 
 //cookieParser
 app.use(cookieParser());
@@ -19,6 +25,9 @@ app.use(
 		cookie: {},
 	})
 );
+
+//use cors
+app.use(cors());
 
 // database
 const db = require("./config/");
@@ -91,20 +100,52 @@ app.use(express.json());
 // app.use('/public', express.static('public'));
 app.use(express.static(path.join(__dirname, "public")));
 
+//Note: move it to json swagger config
+// swaggerUi and swaggerJsDocs config
+const options = {
+	definition: {
+		openapi: "3.0.0",
+		info: {
+			title: "Shoe Store API",
+			version: "1.0.0",
+			description: "A simple Express Library API",
+		},
+		servers: [
+			{
+				url: "http://localhost:3010/",
+			},
+		],
+		basePath: "/",
+	},
+	apis: [
+		path.join(__dirname, "app/controllers/*.js"),
+		path.join(__dirname, "app/models/*.js"),
+		path.join(__dirname, "app/middlewares/*.js"),
+	],
+};
+const specs = swaggerJsDoc(options);
+
+app.use(
+	"/api-docs",
+	swaggerUi.serve,
+	swaggerUi.setup(specs, { explorer: true })
+);
+
 // router
 const route = require("./routes/index.route");
 route(app);
 
 // configure ssl server
-const sslServer = https.createServer(
-	{
-		key: fs.readFileSync(path.join(__dirname, "cert", "key.pem")),
-		cert: fs.readFileSync(path.join(__dirname, "cert", "cert.pem")),
-	},
-	app
-);
+// const sslServer = https.createServer(
+// 	{
+// 		key: fs.readFileSync(path.join(__dirname, "cert", "key.pem")),
+// 		cert: fs.readFileSync(path.join(__dirname, "cert", "cert.pem")),
+// 		// ca: fs.readFileSync(path.join(__dirname, "cert", "csr.pem")),
+// 	},
+// 	app
+// );
 
-const PORT = 3000;
-sslServer.listen(PORT, () =>
-	console.log(`Secure server has started on port ${PORT}`)
-);
+const PORT = 3010;
+http
+	.createServer(app)
+	.listen(PORT, () => console.log(`Secure server has started on port ${PORT}`));

@@ -3,6 +3,7 @@ const siteRouter = require("./site.route");
 const cusRouter = require("./cus.route");
 const accountRouter = require("./account.route");
 const adminRouter = require("./admin.route");
+
 // models and help of Category
 const {
 	mutipleMongooseToObject,
@@ -15,7 +16,6 @@ const Account = require("../app/models/account.model");
 const passportConfig = require("../app/middlewares/passport.mdw");
 
 // const verify = require('../app/middlewares/auth.mdw');
-
 function route(app) {
 	// locals, why session not access in handlebars?
 	app.use(async (req, res, next) => {
@@ -41,13 +41,13 @@ function route(app) {
 		next();
 	});
 	// admin routes
-	app.use("/admin", adminRouter);
+	app.use("/admin", passportConfig.auth, adminRouter);
 
 	// shoe
 	app.use("/shoes", shoeRouter);
 
 	// account
-	app.use("/account", accountRouter);
+	app.use("/auth", accountRouter);
 
 	// cart and checkout
 	app.use("/customerService", passportConfig.auth, cusRouter);
